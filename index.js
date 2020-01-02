@@ -1,14 +1,10 @@
 const WebSocket = require('ws');
-const https = require('https');
+const http = require('http');
 const fs = require('fs');
 const url = require('url')
-const option = {
-  key: fs.readFileSync('./SSL/server-key.pem'),
-  cert: fs.readFileSync('./SSL/server-crt.pem')
-}
 const port = process.env.PORT || 55810;
 
-let server = https.createServer(option)
+let server = http.createServer();
 
 function uuid () {
   return Math.random().toString(36).substr(2, 12).toUpperCase();
