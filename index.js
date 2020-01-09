@@ -19,9 +19,6 @@ wss.on('connection', function connection(ws, req) {
   
   ws.on('message', function incoming(data) {
     switch (JSON.parse(data).type) {
-      case 'fake':
-        console.log(`${ws.uuid}가 FAKE 데이터를 보냄.`);
-        break;
       case 'syncPls':
         const syncTarget = wss.clients.find(client => client.readyState === WebSocket.OPEN && client.projectID === ws.projectID)
         ws.syncPls = true;
