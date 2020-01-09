@@ -18,12 +18,30 @@ wss.on('connection', function connection(ws, req) {
   console.log(`${ws.uuid}가 ${ws.projectID}에 연결함!`);
   
   ws.on('message', function incoming(data) {
-    wss.clients.forEach(function each(client) {
-      if (client.readyState === WebSocket.OPEN && client.projectID === ws.projectID) {
-        client.send(data);
-      }
-    });
-    console.log(`${ws.uuid}가 ${ws.projectID}로 신호를 보냄: ${data}`);
+    switch (JSON.parse(data).type) {
+      case 'fake':
+        console.log(`${ws.uuid}가 FAKE 데이터를 보냄.`);
+        break;
+      case 'syncPls':
+        const syncTarget = wss.clients.find(client => client.readyState === WebSocket.OPEN && client.projectID === ws.projectID)
+        ws.syncPls = true;
+        syncTarget.send(JSON.stringify({ type: "syncPls" }));
+        break;
+      case 'sync':
+        const syncPls = wss.clients.find(client => client.readyState === WebSocket.OPEN && client.projectID === ws.projectID && syncPls)
+        delete ws.syncPls;
+        syncPls.send(JSON.stringify({ type: "sync", data: data }));
+        break;
+      default:
+        wss.clients.forEach(function each(client) {
+          if (client.readyState === WebSocket.OPEN && client.projectID === ws.projectID) {
+            client.send(data);
+          }
+        });
+        console.log(`${ws.uuid}가 ${ws.projectID}로 데이터를 보냄: ${data}`);
+        break;
+    }
+
   });
 
   ws.on('close', function close() {
