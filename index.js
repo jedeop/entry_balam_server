@@ -31,9 +31,7 @@ wss.on('connection', function connection(ws, req) {
         break;
       default:
         wss.clients.forEach(function each(client) {
-          if (client.readyState === WebSocket.OPEN && client.projectID === ws.projectID) {
-            client.send(data);
-          }
+          if (client.readyState === WebSocket.OPEN && client.projectID === ws.projectID && client !== ws) client.send(data);
         });
         console.log(`${ws.uuid}가 ${ws.projectID}로 데이터를 보냄: ${data}`);
         break;
