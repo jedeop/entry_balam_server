@@ -103,6 +103,8 @@ wss.on('connection', function connection(ws, req) {
         variable.value[message.value.index - 1].data = message.value.data;
         projects[ws.projectID].broadcast({ type: 'list', target: message.target, value: variable.value });
         break;
+      case 'message':
+        projects[ws.projectID].broadcast(message);
       default:
         break;
       }
