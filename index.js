@@ -105,6 +105,9 @@ wss.on('connection', function connection(ws, req) {
         break;
       case 'message':
         projects[ws.projectID].broadcast(message);
+        break;
+      case 'sync':
+        ws.send(JSON.stringify({ type: 'sync', data: projects[ws.projectID].vc }))
       default:
         break;
       }
