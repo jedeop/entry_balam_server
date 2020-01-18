@@ -89,17 +89,25 @@ wss.on('connection', function connection(ws, req) {
         break;
       case 'removeList':
         variable = projects[ws.projectID].getList(message.target.id);
+        if (message.value > variable.value.length) { // index 값이 유효하지 않다면 멈추기
+          break;
+        }
         variable.value.splice(message.value - 1, 1);
         projects[ws.projectID].broadcast({ type: 'list', target: message.target, value: variable.value });
         break;
       case 'insertList':
         variable = projects[ws.projectID].getList(message.target.id);
+        if (message.value.index > variable.value.length) { // index 값이 유효하지 않다면 멈추기
+          break;
+        }
         variable.value.splice(message.value.index - 1, 0, { data: message.value.data });
         projects[ws.projectID].broadcast({ type: 'list', target: message.target, value: variable.value });
         break;
       case 'changeList':
-        // TODO: 통신 지연 시 실제 데이터와 작품의 데이터에 차이가 생겨 [(리스트)의 항목 수] 같은 블록이 실제와 다름. 이 경우 index값이 달라 에러가 생길 수 있음. 해결책 필요
         variable = projects[ws.projectID].getList(message.target.id);
+        if (message.value.index > variable.value.length) { // index 값이 유효하지 않다면 멈추기
+          break;
+        }
         variable.value[message.value.index - 1].data = message.value.data;
         projects[ws.projectID].broadcast({ type: 'list', target: message.target, value: variable.value });
         break;
